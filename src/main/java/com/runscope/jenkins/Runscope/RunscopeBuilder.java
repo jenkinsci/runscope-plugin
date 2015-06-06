@@ -14,8 +14,10 @@ import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import hudson.model.Result;
 import hudson.model.AbstractProject;
+import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Builder;
 import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.Publisher;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
@@ -25,7 +27,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
  * @author Harmeek Jhutty
  * @email  hjhutty@redeploy.io
  */
-public class RunscopeBuilder extends Builder {
+public class RunscopeBuilder extends Publisher {
 
     private static final String DISPLAY_NAME = "Runscope Test Configuration";
     private static final String TEST_RESULTS_PASS = "pass";
@@ -44,26 +46,30 @@ public class RunscopeBuilder extends Builder {
 		    this.timeout = timeout;
 	}
 
-	/**
-	 * @return the triggerEndPoint
-	 */
-	public String getTriggerEndPoint() {
-		return triggerEndPoint;
-	}
+    /**
+     * @return the triggerEndPoint
+     */
+    public String getTriggerEndPoint() {
+	return triggerEndPoint;
+    }
 	
-	/**
-	 * @return the accessToken
-	 */
-	public String getAccessToken() {
-		return accessToken;
-	}
+    /**
+     * @return the accessToken
+     */
+    public String getAccessToken() {
+	return accessToken;
+    }
 	
-	/**
-	 * @return the timeout
-	 */
-	public Integer getTimeout() {
-		return timeout;
-	}
+    /**
+     * @return the timeout
+     */
+    public Integer getTimeout() {
+	return timeout;
+    }
+    
+    public BuildStepMonitor getRequiredMonitorService() {
+        return BuildStepMonitor.BUILD;
+    }
 
     /* 
      * @see hudson.tasks.BuildStepCompatibilityLayer#perform(hudson.model.AbstractBuild, hudson.Launcher, hudson.model.BuildListener)
@@ -85,24 +91,20 @@ public class RunscopeBuilder extends Builder {
             String result = future.get(timeout, TimeUnit.SECONDS);
             if (!TEST_RESULTS_PASS.equalsIgnoreCase(result)) {
         	build.setResult(Result.FAILURE);
+        	return false;
             }
         } catch (TimeoutException e) {
-            logger.println("Timeout Exception:" + e.toString());
+            logger.println("Timeout Exception:" + e.getMessage());
             build.setResult(Result.FAILURE);
-            e.printStackTrace();
+            return false;
         } catch (Exception e) {
-            logger.println("Exception:" + e.toString());
+            logger.println("Exception:" + e.getMessage());
             build.setResult(Result.FAILURE);
-            e.printStackTrace();
+            return false;
         }
         executorService.shutdownNow();
         
         return true;
-    }
-    
-    @Override
-    public DescriptorImpl getDescriptor() {
-        return (DescriptorImpl)super.getDescriptor();
     }
 
     /**
@@ -110,14 +112,14 @@ public class RunscopeBuilder extends Builder {
      * The class is marked as public so that it can be accessed from views.
      */
     @Extension 
-    public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
+    public static class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 
         /**
          * In order to load the persisted global configuration, you have to 
          * call load() in the constructor.
          */
         public DescriptorImpl() {
-            load();
+            super(RunscopeBuilder.class);
         }
 
         public boolean isApplicable(Class<? extends AbstractProject> aClass) {
@@ -132,5 +134,6 @@ public class RunscopeBuilder extends Builder {
         }
 
     }
+
 }
 

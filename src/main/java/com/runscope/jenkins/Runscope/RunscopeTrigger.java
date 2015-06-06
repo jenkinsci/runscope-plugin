@@ -65,7 +65,7 @@ public class RunscopeTrigger implements Callable<String>{
 	String resultsUrl = process(url, TEST_TRIGGER);
 	log.println("Test Results URL:" + resultsUrl);
 	
-    // TODO: If bucketId or test run detail URI gets added to trigger response, use those instead of regex        
+        // TODO: If bucketId or test run detail URI gets added to trigger response, use those instead of regex        
 	String apiResultsUrl = resultsUrl.replaceAll(RUNSCOPE_HOST + "\\/radar\\/([^\\/]+)\\/([^\\/]+)\\/results\\/([^\\/]+)", API_HOST + "/buckets/$1/radar/$2/results/$3");
 	log.println("API URL:" + apiResultsUrl);
 	        
@@ -161,13 +161,13 @@ public class RunscopeTrigger implements Callable<String>{
     	    latch.await();
     	    
     	} catch (Exception e){ 
-    		LOGGER.log(Level.SEVERE,"Exception: ", e);
+    		LOGGER.log(Level.SEVERE,"Exception: ", e.getMessage());
     		e.printStackTrace();
     	}finally {
     		try{
     		    httpclient.close();
     		}catch (IOException e) {
-    		    LOGGER.log(Level.SEVERE,"Error closing connection: ",e);
+    		    LOGGER.log(Level.SEVERE,"Error closing connection: ",e.getMessage());
     		    e.printStackTrace();
         	}
     	}  
