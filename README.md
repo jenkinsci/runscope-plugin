@@ -15,7 +15,7 @@ With this plugin you can add a build step to your Jenkins project that executes 
 ## Usage
 1. Open your project configuration from the Jenkins dashboard. 
 2. In the build section, click ```Add build step``` and select ```Runscope Test Congiruation```. Be certain that this API test build step is after your API has been deployed.
-3. A form will appear. For the ```Test Trigger URL``` field, paste in the Trigger URL from above. For the ```Access Token``` field, paste in the personal access token from above. 
+3. In the ```Test Trigger URL``` field, paste in the Trigger URL from above. For the ```Access Token``` field, paste in the personal access token from above. 
 4. Save your Jenkins project.
 
 ## ToDo List
