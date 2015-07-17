@@ -31,8 +31,7 @@ import net.sf.json.JSONObject;
 /**
  * RunscopeTrigger
  *
- * @author Harmeek Jhutty
- * @email  hjhutty@redeploy.io
+ * @email  help@runscope.com
  */
 public class RunscopeTrigger implements Callable<String>{
     
@@ -52,20 +51,21 @@ public class RunscopeTrigger implements Callable<String>{
     
     private PrintStream log;
     String resp = null;
-	
+
     public RunscopeTrigger(PrintStream logger, String url, String accessToken) {
 	this.log = logger;
 	this.url = url;
 	this.accessToken = accessToken;
     }
-    
+
     @Override
     public String call() throws Exception {
 	
 	String resultsUrl = process(url, TEST_TRIGGER);
 	log.println("Test Results URL:" + resultsUrl);
 	
-    // TODO: If bucketId or test run detail URI gets added to trigger response, use those instead of regex        
+        /* TODO: If bucketId or test run detail URI gets added to trigger 
+           response, use those instead of regex */
 	String apiResultsUrl = resultsUrl.replaceAll(RUNSCOPE_HOST + "\\/radar\\/([^\\/]+)\\/([^\\/]+)\\/results\\/([^\\/]+)", API_HOST + "/buckets/$1/radar/$2/results/$3");
 	log.println("API URL:" + apiResultsUrl);
 	        
@@ -75,11 +75,12 @@ public class RunscopeTrigger implements Callable<String>{
 	    Thread.currentThread().interrupt();
 	    ex.printStackTrace();
 	}
-	          
+  
 	while(true){
 	    resp = process(apiResultsUrl, TEST_RESULTS);
 	    log.println("Response received:" + resp);
-	        	
+
+            /* If test run is not complete, sleep 1s and try again. */
 	    if( TEST_RESULTS_WORKING.equalsIgnoreCase(resp) ||  TEST_RESULTS_QUEUED.equalsIgnoreCase(resp)  ) {
 		try {
 		    TimeUnit.SECONDS.sleep(1);
@@ -93,7 +94,12 @@ public class RunscopeTrigger implements Callable<String>{
 	 return resp;
 	}
     
-	
+    /**
+     * Method for making HTTP call
+     * @param url
+     * @param apiEndPoint
+     * @return 
+     */
     public String process(String url, final String apiEndPoint) {
     
     	RequestConfig config = RequestConfig.custom()
@@ -173,7 +179,7 @@ public class RunscopeTrigger implements Callable<String>{
     	}  
     	return result;
     }
-    
+
     
     /**
      * @param data
@@ -203,6 +209,6 @@ public class RunscopeTrigger implements Callable<String>{
        }     
        return testResult;
     }
-    
+
     private static final Logger LOGGER = Logger.getLogger(RunscopeTrigger.class.getName());
 }
