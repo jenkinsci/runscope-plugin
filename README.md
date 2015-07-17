@@ -13,10 +13,10 @@ With this plugin you can add a build step to your Jenkins project that executes 
 * **Access Token** - in order for the plugin to check on the status of triggered test (via the Runscope API), it requires an OAuth access token. To create an access token, login to your Runscope account and navigate to [https://www.runscope.com/applications](https://www.runscope.com/applications). Here, click ```Create Application``` -- for name, type in *Jenkins Plugin*. For website and callback URLs, you can just type in ```https://www.runscope.com``` as placeholders (these URLs are never used -- we're just creating an application for the personal access token). After you've created the application, copy down the personal access token (i.e. ```5ffffffe-ab99-43ff-7777-3333deee99f9```)
  
 ## Usage
- 1. Open your project configuration from the Jenkins dashboard. 
- 2. In the build section, click ```Add build step``` and select ```Runscope Test Congiruation```. 
- 3. A form will appear. For the ```Test Trigger URL``` field, paste in the Trigger URL from above. For the ```Access Token``` field, paste in the personal access token from above. 
- 4. Save your Jenkins project.
+1. Open your project configuration from the Jenkins dashboard. 
+2. In the build section, click ```Add build step``` and select ```Runscope Test Congiruation```. Be certain that this API test build step is after your API has been deployed.
+3. A form will appear. For the ```Test Trigger URL``` field, paste in the Trigger URL from above. For the ```Access Token``` field, paste in the personal access token from above. 
+4. Save your Jenkins project.
 
 ## ToDo List
 * Add this project to the official Jenkins plugin repository
