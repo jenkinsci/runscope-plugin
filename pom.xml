@@ -11,13 +11,13 @@
     <relativePath/>
   </parent>
   <groupId>com.runscope.jenkins</groupId>
-  <artifactId>Runscope</artifactId>
+  <artifactId>runscope</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>hpi</packaging>
 
-  <name>Runscope Plugin</name>
-  <description>Runscope External Testing Tool</description>
-  <url>https://wiki.jenkins-ci.org/display/JENKINS/TODO+Plugin</url>
+  <name>Runscope plugin</name>
+  <description>Runscope API test integration</description>
+  <url>https://github.com/Runscope/runscope-jenkins-plugin</url>
   <licenses>
     <license>
       <name>MIT License</name>
