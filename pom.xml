@@ -17,7 +17,14 @@
 
   <name>Runscope plugin</name>
   <description>Runscope API test integration</description>
-  <url>https://github.com/Runscope/runscope-jenkins-plugin</url>
+  <url>https://wiki.jenkins-ci.org/display/JENKINS/Runscope+Plugin</url>
+  <developers>
+    <developer>
+      <id>mansilladev</id>
+      <name>Neil Mansilla</name>
+      <email>neil@runscope.com</email>
+    </developer>
+  </developers>
   <licenses>
     <license>
       <name>MIT License</name>
