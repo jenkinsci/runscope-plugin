@@ -18,7 +18,7 @@ With this plugin you can add a build step to your Jenkins project that executes 
 3. In the ```Test Trigger URL``` field, paste in the Trigger URL from above. For the ```Access Token``` field, paste in the personal access token from above. 
 4. Save your Jenkins project.
 
-## ToDo List
-* Add this project to the official Jenkins plugin repository
+## Change Log
+2015-Sep-08: Refactored HTTP request/response. This fixes bug where larger test run details could not be parsed properly.
 
 
