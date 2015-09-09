@@ -11,7 +11,7 @@
   </parent>
   <groupId>com.runscope.jenkins</groupId>
   <artifactId>runscope</artifactId>
-  <version>1.4</version>
+  <version>1.4-SNAPSHOT</version>
   <packaging>hpi</packaging>
 
   <name>Runscope plugin</name>
