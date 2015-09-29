@@ -17,6 +17,6 @@
     <f:textbox />
   </f:entry>
   <f:entry title="Timeout:" field="timeout">
-    <f:textbox />
+    <f:textbox default="60" />
   </f:entry>
 </j:jelly>
