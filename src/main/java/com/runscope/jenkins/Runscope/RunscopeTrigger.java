@@ -38,7 +38,6 @@ public class RunscopeTrigger implements Callable<String> {
 
     private final String accessToken;
     private String url;
-    private String result;
 
     private PrintStream log;
     String resp = null;
@@ -93,7 +92,7 @@ public class RunscopeTrigger implements Callable<String> {
      * @return
      */
     public String process(String url, final String apiEndPoint) {
-
+        String result = "";
         final CloseableHttpAsyncClient httpclient = HttpAsyncClients.createDefault();
         try {
             httpclient.start();
@@ -105,14 +104,19 @@ public class RunscopeTrigger implements Callable<String> {
 
             final HttpGet request = new HttpGet(url);
             request.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
-            request.setHeader("User-Agent", "runscope-jenkins-plugin/1.44-SNAPSHOT");
+            request.setHeader("User-Agent", "runscope-jenkins-plugin/1.46");
             request.setConfig(config);
             final Future<HttpResponse> future = httpclient.execute(request, null);
             final HttpResponse response = future.get();
-            String responseBody = EntityUtils.toString(response.getEntity(), "UTF-8");
-            log.println("Data received: " + responseBody);
-            result = parseJSON(responseBody, apiEndPoint);
-            httpclient.close();
+
+            if (response.getStatusLine().getStatusCode() == 404) {
+              log.println("Test run not found, marking as failed");
+              result = TEST_RESULTS_FAIL;
+            } else {
+              String responseBody = EntityUtils.toString(response.getEntity(), "UTF-8");
+              log.println("Data received: " + responseBody);
+              result = parseJSON(responseBody, apiEndPoint);
+            }
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Exception: ", e);
             e.printStackTrace();
