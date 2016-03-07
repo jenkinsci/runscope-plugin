@@ -1,5 +1,6 @@
 package com.runscope.jenkins.Runscope;
 
+import java.io.IOException;
 import java.io.PrintStream;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -8,6 +9,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import hudson.EnvVars;
 import hudson.Launcher;
 import hudson.Extension;
 import hudson.model.AbstractBuild;
@@ -68,17 +70,18 @@ public class RunscopeBuilder extends Builder {
      * @see hudson.tasks.BuildStepCompatibilityLayer#perform(hudson.model.AbstractBuild, hudson.Launcher, hudson.model.BuildListener)
      */
     @Override
-    public boolean perform(AbstractBuild build, Launcher launcher, BuildListener listener) {
-    	
-    	PrintStream logger = listener.getLogger();
+    public boolean perform(AbstractBuild build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
+	PrintStream logger = listener.getLogger();
+	EnvVars envVars = build.getEnvironment(listener);
+	String expandedTriggerEndPoint = envVars.expand(triggerEndPoint);
 
     	logger.println("Build Trigger Configuration:");
-    	logger.println("Trigger End Point:" + triggerEndPoint);
+	logger.println("Trigger End Point:" + expandedTriggerEndPoint);
     	logger.println("Access Token:" + accessToken);
     	logger.println("Timeout:" + timeout);
     	
         ExecutorService executorService = Executors.newSingleThreadExecutor();
-        Future<String> future = executorService.submit(new RunscopeTrigger(logger, triggerEndPoint, accessToken /*triggerEndPoint, */));
+        Future<String> future = executorService.submit(new RunscopeTrigger(logger, expandedTriggerEndPoint, accessToken /*triggerEndPoint, */));
 
         try {
             String result = future.get(timeout, TimeUnit.SECONDS);

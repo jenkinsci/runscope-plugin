@@ -2,7 +2,10 @@ Runscope API Test Plugin for Jenkins
 -------------
 With this plugin you can add a build step to your Jenkins project that executes a Runscope API test. You would add this step after your API has been deployed and is ready for testing. After the Runscope API is triggered, the plugin will wait for the test run to finish (or timeout). If the API test step is successful, your pipeline will continue to the next step in your pipeline; however, if it fails (or times out), the build will be marked as failed.
 
-## Installing
+## Installing from Jenkins
+This plugin can be installed from within the Jenkins UI (recommended).
+
+## Installing from Source
 1. Download and unpack the source
 2. From terminal ```mvn clean install```
 3. Copy ```target/Runscope.hpi``` to ```$JENKINS_HOME/plugins```
