@@ -109,8 +109,9 @@ public class RunscopeTrigger implements Callable<String> {
             final Future<HttpResponse> future = httpclient.execute(request, null);
             final HttpResponse response = future.get();
 
-            if (response.getStatusLine().getStatusCode() == 404) {
-              log.println("Test run not found, marking as failed");
+            final int statusCode = response.getStatusLine().getStatusCode();
+            if (statusCode != 200) {
+              log.println(String.format("Error retrieving details from Runscope API, marking as failed: %s", statusCode));
               result = TEST_RESULTS_FAIL;
             } else {
               String responseBody = EntityUtils.toString(response.getEntity(), "UTF-8");
