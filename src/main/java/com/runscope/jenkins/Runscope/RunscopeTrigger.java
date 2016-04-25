@@ -104,7 +104,7 @@ public class RunscopeTrigger implements Callable<String> {
 
             final HttpGet request = new HttpGet(url);
             request.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
-            request.setHeader("User-Agent", "runscope-jenkins-plugin/1.46");
+            request.setHeader("User-Agent", "runscope-jenkins-plugin/1.47");
             request.setConfig(config);
             final Future<HttpResponse> future = httpclient.execute(request, null);
             final HttpResponse response = future.get();

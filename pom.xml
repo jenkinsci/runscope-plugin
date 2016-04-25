@@ -11,7 +11,7 @@
   </parent>
   <groupId>com.runscope.jenkins</groupId>
   <artifactId>runscope</artifactId>
-  <version>1.46</version>
+  <version>1.47-SNAPSHOT</version>
   <packaging>hpi</packaging>
 
   <name>Runscope plugin</name>
@@ -34,7 +34,7 @@
     <connection>scm:git:git://github.com/jenkinsci/runscope-plugin.git</connection>
     <developerConnection>scm:git:git@github.com:jenkinsci/runscope-plugin.git</developerConnection>
     <url>http://github.com/jenkinsci/runscope-plugin</url>
-    <tag>runscope-1.46</tag>
+    <tag>runscope-1.47</tag>
   </scm>
   <repositories>
     <repository>
