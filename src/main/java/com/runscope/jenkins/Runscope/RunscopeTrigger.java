@@ -110,7 +110,7 @@ public class RunscopeTrigger implements Callable<String> {
             final HttpResponse response = future.get();
 
             final int statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode != 200 || statusCode != 201) {
+            if (statusCode != 200 && statusCode != 201) {
               log.println(String.format("Error retrieving details from Runscope API, marking as failed: %s", statusCode));
               result = TEST_RESULTS_FAIL;
             } else {
