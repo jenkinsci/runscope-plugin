@@ -104,13 +104,13 @@ public class RunscopeTrigger implements Callable<String> {
 
             final HttpGet request = new HttpGet(url);
             request.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
-            request.setHeader("User-Agent", "runscope-jenkins-plugin/1.46");
+            request.setHeader("User-Agent", "runscope-jenkins-plugin/1.47");
             request.setConfig(config);
             final Future<HttpResponse> future = httpclient.execute(request, null);
             final HttpResponse response = future.get();
 
             final int statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode != 200) {
+            if (statusCode != 200 && statusCode != 201) {
               log.println(String.format("Error retrieving details from Runscope API, marking as failed: %s", statusCode));
               result = TEST_RESULTS_FAIL;
             } else {
