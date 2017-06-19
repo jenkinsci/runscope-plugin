@@ -102,7 +102,11 @@ public class RunscopeTrigger implements Callable<String> {
         try {
             httpclient.start();
 
-	    ProxyConfiguration proxyConfig = Jenkins.getInstance().proxy;
+	    Jenkins j = Jenkins.getInstance();
+	    ProxyConfiguration proxyConfig = null;
+	    if (j != null) {
+		    proxyConfig = j.proxy;
+	    }
 
 	    RequestConfig config = null;
 

@@ -35,8 +35,6 @@ public class RunscopeBuilder extends Builder {
     private final String accessToken;
     private int timeout = 60;
     
-    public String resp;
-
     @DataBoundConstructor
     public RunscopeBuilder(String triggerEndPoint, String accessToken, int timeout) {
 		this.triggerEndPoint = triggerEndPoint;

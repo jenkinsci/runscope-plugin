@@ -3,6 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <properties>
 	  <jenkins.version>1.580.1</jenkins.version>
+	  <findbugs.skip>true</findbugs.skip>
   </properties>
 
   <parent>
@@ -93,6 +94,13 @@
                 <pluginFirstClassLoader>true</pluginFirstClassLoader>
             </configuration>
         </plugin>
+	<plugin>
+		<groupId>org.codehaus.mojo</groupId>
+		<artifactId>findbugs-maven-plugin</artifactId>
+		<configuration>
+			<skip>true</skip>
+		</configuration>
+	</plugin>
     </plugins>
 </build>
 </project>
