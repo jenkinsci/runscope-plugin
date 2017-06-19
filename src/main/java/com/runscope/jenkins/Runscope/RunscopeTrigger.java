@@ -27,7 +27,7 @@ import net.sf.json.JSONObject;
 /**
  * RunscopeTrigger
  *
- * @email help@runscope.com
+ * email help@runscope.com
  */
 public class RunscopeTrigger implements Callable<String> {
 
