@@ -24,7 +24,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 /**
  * RunscopeBuilder {@link Builder}.
  *
- * @email  help@runscope.com
+ * email  help@runscope.com
  */
 public class RunscopeBuilder extends Builder {
 
