@@ -7,8 +7,13 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.net.Proxy;
+
+import hudson.ProxyConfiguration;
+import jenkins.model.Jenkins;
 
 import org.apache.http.HttpHeaders;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
 import org.apache.http.client.config.RequestConfig;
@@ -97,10 +102,25 @@ public class RunscopeTrigger implements Callable<String> {
         try {
             httpclient.start();
 
-            final RequestConfig config = RequestConfig.custom()
-                    .setConnectTimeout(60 * 1000)
-                    .setConnectionRequestTimeout(60 * 1000)
-                    .setSocketTimeout(60 * 1000).build();
+	    ProxyConfiguration proxyConfig = Jenkins.getInstance().proxy;
+
+	    RequestConfig config = null;
+
+	    if (proxyConfig != null) {
+		    HttpHost proxy = new HttpHost(proxyConfig.name, proxyConfig.port);
+		    config = RequestConfig.custom()
+			    .setConnectTimeout(60 * 1000)
+			    .setConnectionRequestTimeout(60 * 1000)
+			    .setSocketTimeout(60 * 1000)
+			    .setProxy(proxy)
+			    .build();
+	    } else {
+		    config = RequestConfig.custom()
+			    .setConnectTimeout(60 * 1000)
+			    .setConnectionRequestTimeout(60 * 1000)
+			    .setSocketTimeout(60 * 1000)
+			    .build();
+	    }
 
             final HttpGet request = new HttpGet(url);
             request.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
