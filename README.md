@@ -12,7 +12,7 @@ This plugin can be installed from within the Jenkins UI (recommended).
 4. Restart Jenkins 
 
 ## Prerequisites
-* **Trigger URL** - every Runscope API test has it's a unique URL that allows you to execute a test run from remote. Fetch the Trigger URL from your Runscope test's settings. (i.e. ```https://api.runscope.com/radar/abcdefg/trigger```)
+* **Trigger URL** - every Runscope API test and bucket has a unique URL that allows you to execute test runs remotely. Fetch the Trigger URL from your Runscope test or bucket settings. (i.e. ```https://api.runscope.com/radar/abcdefg/trigger```)
 * **Access Token** - in order for the plugin to check on the status of triggered test (via the Runscope API), it requires an OAuth access token. To create an access token, login to your Runscope account and navigate to [https://www.runscope.com/applications](https://www.runscope.com/applications). Here, click ```Create Application``` -- for name, type in *Jenkins Plugin*. For website and callback URLs, you can just type in ```https://www.runscope.com``` as placeholders (these URLs are never used -- we're just creating an application for the personal access token). After you've created the application, copy down the personal access token (i.e. ```5ffffffe-ab99-43ff-7777-3333deee99f9```)
  
 ## Usage

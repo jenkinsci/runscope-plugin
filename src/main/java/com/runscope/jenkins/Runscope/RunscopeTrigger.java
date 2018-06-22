@@ -5,6 +5,9 @@ import java.io.PrintStream;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.net.Proxy;
@@ -56,13 +59,36 @@ public class RunscopeTrigger implements Callable<String> {
     @Override
     public String call() throws Exception {
 
-        String resultsUrl = process(url, TEST_TRIGGER);
-        log.println("Test Results URL:" + resultsUrl);
+        String urlsJson = process(url, TEST_TRIGGER);
 
-        /* TODO: If bucketId or test run detail URI gets added to trigger 
+        //Fail fast if trigger request fails
+        if (urlsJson.isEmpty()) {
+            return "";
+        }
+
+        JSONArray urlsArray = JSONArray.fromObject(urlsJson);
+        List<String> resultsUrls = new ArrayList<>();
+
+        //Build collection of test result urls
+        log.println("Test Results URLs:");
+        for (int i = 0; i < urlsArray.size(); i++) {
+            JSONObject runObject = urlsArray.getJSONObject(i);
+            log.println(runObject.getString("url"));
+            resultsUrls.add(runObject.getString("url"));
+        }
+
+        /* TODO: If bucketId or test run detail URI gets added to trigger
            response, use those instead of regex */
-        String apiResultsUrl = resultsUrl.replaceAll(RUNSCOPE_HOST + "\\/radar\\/([^\\/]+)\\/([^\\/]+)\\/results\\/([^\\/]+)", API_HOST + "/buckets/$1/radar/$2/results/$3");
-        log.println("API URL:" + apiResultsUrl);
+
+        //Convert each test result url to an api result url
+        log.println("API URLs:");
+        ListIterator<String> apiIterator = resultsUrls.listIterator();
+        while (apiIterator.hasNext()) {
+            String apiResultsUrl = apiIterator.next().replaceAll(RUNSCOPE_HOST + "\\/radar\\/([^\\/]+)\\/([^\\/]+)\\/results\\/([^\\/]+)", API_HOST + "/buckets/$1/radar/$2/results/$3");
+            log.println(apiResultsUrl);
+            apiIterator.set(apiResultsUrl);
+        }
+
 
         try {
             TimeUnit.SECONDS.sleep(10);
@@ -71,22 +97,35 @@ public class RunscopeTrigger implements Callable<String> {
             ex.printStackTrace();
         }
 
-        while (true) {
-            resp = process(apiResultsUrl, TEST_RESULTS);
-            log.println("Response received:" + resp);
+        //Poll each test sequentially until pass or fail
+        //This ensures that the job finishes only when all tests have finished
+        ListIterator<String> resultsIterator = resultsUrls.listIterator();
+        String finalResult = TEST_RESULTS_PASS;
+        while (resultsIterator.hasNext()) {
+            String testResultsUrl = resultsIterator.next();
+            log.println("Polling Test: " + testResultsUrl);
 
-            /* If test run is not complete, sleep 1s and try again. */
-            if (TEST_RESULTS_WORKING.equalsIgnoreCase(resp) || TEST_RESULTS_QUEUED.equalsIgnoreCase(resp)) {
-                try {
-                    TimeUnit.SECONDS.sleep(1);
-                } catch (InterruptedException ex) {
-                    Thread.currentThread().interrupt();
+            while (true) {
+                resp = process(testResultsUrl, TEST_RESULTS);
+                log.println("Response received:" + resp);
+
+                /* If test run is not complete, sleep 1s and try again. */
+                if (TEST_RESULTS_WORKING.equalsIgnoreCase(resp) || TEST_RESULTS_QUEUED.equalsIgnoreCase(resp)) {
+                    try {
+                        TimeUnit.SECONDS.sleep(1);
+                    } catch (InterruptedException ex) {
+                        Thread.currentThread().interrupt();
+                    }
+                } else {
+                    if (TEST_RESULTS_FAIL.equalsIgnoreCase(resp)) {
+                      log.println("Test FAILED!");
+                      finalResult = TEST_RESULTS_FAIL;
+                    }
+                    break;
                 }
-            } else {
-                break;
             }
         }
-        return resp;
+        return finalResult;
     }
 
     /**
@@ -136,10 +175,9 @@ public class RunscopeTrigger implements Callable<String> {
             final int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode != 200 && statusCode != 201) {
               log.println(String.format("Error retrieving details from Runscope API, marking as failed: %s", statusCode));
-              result = TEST_RESULTS_FAIL;
+              return result;
             } else {
               String responseBody = EntityUtils.toString(response.getEntity(), "UTF-8");
-              log.println("Data received: " + responseBody);
               result = parseJSON(responseBody, apiEndPoint);
             }
         } catch (Exception e) {
@@ -170,9 +208,9 @@ public class RunscopeTrigger implements Callable<String> {
         JSONObject dataObject = (JSONObject) jsonObject.get("data");
 
         if (TEST_TRIGGER.equals(apiEndPoint)) {
-            JSONArray runsArray = dataObject.getJSONArray("runs");
-            JSONObject runsObject = (JSONObject) runsArray.get(0);
-            return runsObject.get("url").toString();
+            String runsJson = dataObject.getString("runs");
+
+            return runsJson;
         }
 
         String testResult = dataObject.get("result").toString();
